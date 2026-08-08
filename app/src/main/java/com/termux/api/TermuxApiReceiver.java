@@ -12,6 +12,7 @@ import com.termux.api.apis.AudioAPI;
 import com.termux.api.apis.BatteryStatusAPI;
 import com.termux.api.apis.BrightnessAPI;
 import com.termux.api.apis.CallLogAPI;
+import com.termux.api.apis.CalendarAPI;
 import com.termux.api.apis.CameraInfoAPI;
 import com.termux.api.apis.CameraPhotoAPI;
 import com.termux.api.apis.ClipboardAPI;
@@ -101,6 +102,21 @@ public class TermuxApiReceiver extends BroadcastReceiver {
                     return;
                 }
                 BrightnessAPI.onReceive(this, context, intent);
+                break;
+            case "CalendarList":
+                if (TermuxApiPermissionActivity.checkAndRequestPermissions(context, intent, Manifest.permission.READ_CALENDAR)) {
+                    CalendarAPI.onReceiveCalendars(this, context, intent);
+                }
+                break;
+            case "CalendarEventList":
+                if (TermuxApiPermissionActivity.checkAndRequestPermissions(context, intent, Manifest.permission.READ_CALENDAR)) {
+                    CalendarAPI.onReceiveEvents(this, context, intent);
+                }
+                break;
+            case "CalendarEventAdd":
+                if (TermuxApiPermissionActivity.checkAndRequestPermissions(context, intent, Manifest.permission.WRITE_CALENDAR)) {
+                    CalendarAPI.onReceiveAddEvent(this, context, intent);
+                }
                 break;
             case "CameraInfo":
                 CameraInfoAPI.onReceive(this, context, intent);
