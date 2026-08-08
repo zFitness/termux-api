@@ -1,0 +1,686 @@
+[
+  {
+    "command": "termux-audio-info",
+    "name": "音频信息",
+    "category": "媒体与音频",
+    "description": "获取音频输入/输出设备的信息列表。",
+    "usage": "termux-audio-info",
+    "options": [],
+    "permissions": [],
+    "examples": ["termux-audio-info"]
+  },
+  {
+    "command": "termux-battery-status",
+    "name": "电池状态",
+    "category": "系统与设备",
+    "description": "获取电池状态，包括电量、温度、电压、电流及充电状态等。",
+    "usage": "termux-battery-status",
+    "options": [],
+    "permissions": [],
+    "examples": ["termux-battery-status"]
+  },
+  {
+    "command": "termux-brightness",
+    "name": "屏幕亮度",
+    "category": "系统与设备",
+    "description": "设置屏幕亮度或切换自动亮度模式。",
+    "usage": "termux-brightness [brightness] [--auto]",
+    "options": [
+      {"flag": "[brightness]", "arg": "0-255", "desc": "亮度值"},
+      {"flag": "--auto", "arg": "", "desc": "启用自动亮度"}
+    ],
+    "permissions": ["WRITE_SETTINGS"],
+    "examples": ["termux-brightness 100", "termux-brightness --auto"]
+  },
+  {
+    "command": "termux-calendar-list",
+    "name": "日历列表",
+    "category": "个人信息",
+    "description": "列出日历信息或指定时间范围内的日历事件。",
+    "usage": "termux-calendar-list [options]",
+    "options": [
+      {"flag": "--begin", "arg": "ISO8601", "desc": "开始时间"},
+      {"flag": "--end", "arg": "ISO8601", "desc": "结束时间"},
+      {"flag": "--from", "arg": "ISO8601", "desc": "事件起始时间"},
+      {"flag": "--title", "arg": "regex", "desc": "按标题过滤"},
+      {"flag": "--desc", "arg": "regex", "desc": "按描述过滤"},
+      {"flag": "--location", "arg": "regex", "desc": "按地点过滤"},
+      {"flag": "--mode", "arg": "title|detail", "desc": "输出模式"}
+    ],
+    "permissions": ["READ_CALENDAR"],
+    "examples": ["termux-calendar-list", "termux-calendar-list --begin \"2024-01-01\" --end \"2024-12-31\""]
+  },
+  {
+    "command": "termux-calendar-event-add",
+    "name": "添加日历事件",
+    "category": "个人信息",
+    "description": "向日历中添加一个新事件。",
+    "usage": "termux-calendar-event-add [options]",
+    "options": [
+      {"flag": "--title", "arg": "text", "desc": "事件标题"},
+      {"flag": "--begin", "arg": "ISO8601", "desc": "开始时间"},
+      {"flag": "--end", "arg": "ISO8601", "desc": "结束时间"},
+      {"flag": "--all-day", "arg": "", "desc": "全天事件"},
+      {"flag": "--reminder", "arg": "minutes", "desc": "提醒时间"},
+      {"flag": "--event-timezone", "arg": "tz", "desc": "事件时区"},
+      {"flag": "--calendar-id", "arg": "id", "desc": "日历 ID"}
+    ],
+    "permissions": ["WRITE_CALENDAR"],
+    "examples": ["termux-calendar-event-add --title \"会议\" --begin \"2024-01-01 09:00\" --end \"2024-01-01 10:00\""]
+  },
+  {
+    "command": "termux-call-log",
+    "name": "通话记录",
+    "category": "个人信息",
+    "description": "列出通话记录。",
+    "usage": "termux-call-log [options]",
+    "options": [
+      {"flag": "-l, --limit", "arg": "N", "desc": "记录条数"},
+      {"flag": "-o, --offset", "arg": "N", "desc": "偏移量"}
+    ],
+    "permissions": ["READ_CALL_LOG"],
+    "examples": ["termux-call-log -l 10"]
+  },
+  {
+    "command": "termux-camera-info",
+    "name": "摄像头信息",
+    "category": "媒体与音频",
+    "description": "获取摄像头数量及其参数信息。",
+    "usage": "termux-camera-info",
+    "options": [],
+    "permissions": [],
+    "examples": ["termux-camera-info"]
+  },
+  {
+    "command": "termux-camera-photo",
+    "name": "拍照",
+    "category": "媒体与音频",
+    "description": "使用摄像头拍照并保存到文件，支持选择摄像头和输出路径。",
+    "usage": "termux-camera-photo [options]",
+    "options": [
+      {"flag": "-c, --camera", "arg": "id", "desc": "摄像头 ID"},
+      {"flag": "-f, --file", "arg": "path", "desc": "输出文件路径"}
+    ],
+    "permissions": ["CAMERA"],
+    "examples": ["termux-camera-photo", "termux-camera-photo -c 1 -f /sdcard/photo.jpg"]
+  },
+  {
+    "command": "termux-clipboard-get",
+    "name": "读取剪贴板",
+    "category": "系统与设备",
+    "description": "读取剪贴板中的文本内容。",
+    "usage": "termux-clipboard-get",
+    "options": [],
+    "permissions": [],
+    "examples": ["termux-clipboard-get"]
+  },
+  {
+    "command": "termux-clipboard-set",
+    "name": "写入剪贴板",
+    "category": "系统与设备",
+    "description": "将文本写入剪贴板。",
+    "usage": "echo text | termux-clipboard-set",
+    "options": [],
+    "permissions": [],
+    "examples": ["echo \"hello\" | termux-clipboard-set"]
+  },
+  {
+    "command": "termux-contact-list",
+    "name": "联系人列表",
+    "category": "个人信息",
+    "description": "列出所有联系人的姓名与号码。",
+    "usage": "termux-contact-list",
+    "options": [],
+    "permissions": ["READ_CONTACTS"],
+    "examples": ["termux-contact-list"]
+  },
+  {
+    "command": "termux-dialog",
+    "name": "对话框",
+    "category": "界面与通知",
+    "description": "显示各类对话框（文本输入、确认、选择、日期、时间、滑块、语音等）并输出结果。",
+    "usage": "termux-dialog [options]",
+    "options": [
+      {"flag": "-t, --title", "arg": "text", "desc": "对话框标题"},
+      {"flag": "-i, --input", "arg": "", "desc": "文本输入框"},
+      {"flag": "-m, --multiple-lines", "arg": "", "desc": "多行输入"},
+      {"flag": "-n, --numeric", "arg": "", "desc": "数字输入"},
+      {"flag": "-p, --password", "arg": "", "desc": "密码输入"},
+      {"flag": "-c, --confirm", "arg": "", "desc": "确认对话框"},
+      {"flag": "-s, --checkbox", "arg": "", "desc": "复选对话框"},
+      {"flag": "-r, --radio", "arg": "", "desc": "单选对话框"},
+      {"flag": "-u, --spinner", "arg": "", "desc": "下拉选择"},
+      {"flag": "-d, --date", "arg": "", "desc": "日期选择"},
+      {"flag": "--time", "arg": "", "desc": "时间选择"},
+      {"flag": "-e, --counter", "arg": "", "desc": "计数器"},
+      {"flag": "-f, --input-range", "arg": "", "desc": "滑块选择"},
+      {"flag": "-v, --input-values", "arg": "list", "desc": "选项值"},
+      {"flag": "--input-title", "arg": "text", "desc": "输入框标题"},
+      {"flag": "--input-hint", "arg": "text", "desc": "输入框提示"},
+      {"flag": "-a, --date-format", "arg": "format", "desc": "日期格式"},
+      {"flag": "--speech", "arg": "", "desc": "语音识别"}
+    ],
+    "permissions": ["RECORD_AUDIO"],
+    "examples": ["termux-dialog -i -t \"请输入\"", "termux-dialog --date", "termux-dialog -r -v item1,item2,item3"]
+  },
+  {
+    "command": "termux-download",
+    "name": "下载文件",
+    "category": "系统与设备",
+    "description": "从 URL 下载文件到指定位置。",
+    "usage": "termux-download [options] <url>",
+    "options": [
+      {"flag": "-u, --url", "arg": "url", "desc": "下载地址"},
+      {"flag": "-o, --output", "arg": "path", "desc": "输出路径"},
+      {"flag": "-t, --title", "arg": "text", "desc": "通知标题"},
+      {"flag": "-d, --description", "arg": "text", "desc": "通知描述"}
+    ],
+    "permissions": ["INTERNET"],
+    "examples": ["termux-download -u https://example.com/file.zip -o /sdcard/file.zip"]
+  },
+  {
+    "command": "termux-fingerprint",
+    "name": "指纹认证",
+    "category": "安全与隐私",
+    "description": "请求用户进行指纹认证，验证成功后返回指纹信息。",
+    "usage": "termux-fingerprint [options]",
+    "options": [
+      {"flag": "-t, --title", "arg": "text", "desc": "标题"},
+      {"flag": "-d, --description", "arg": "text", "desc": "描述"},
+      {"flag": "-s, --subtitle", "arg": "text", "desc": "副标题"},
+      {"flag": "-c, --cancel", "arg": "text", "desc": "取消按钮文字"}
+    ],
+    "permissions": ["USE_BIOMETRIC"],
+    "examples": ["termux-fingerprint -t \"请验证指纹\""]
+  },
+  {
+    "command": "termux-infrared-frequencies",
+    "name": "红外频率",
+    "category": "系统与设备",
+    "description": "查询红外发射器支持的载波频率。",
+    "usage": "termux-infrared-frequencies",
+    "options": [],
+    "permissions": ["TRANSMIT_IR"],
+    "examples": ["termux-infrared-frequencies"]
+  },
+  {
+    "command": "termux-infrared-transmit",
+    "name": "红外发射",
+    "category": "系统与设备",
+    "description": "发送红外信号（如遥控器指令）。",
+    "usage": "termux-infrared-transmit --frequency <hz> --pattern <hex>",
+    "options": [
+      {"flag": "-f, --frequency", "arg": "hz", "desc": "载波频率"},
+      {"flag": "-p, --pattern", "arg": "hex", "desc": "信号模式（16进制）"}
+    ],
+    "permissions": ["TRANSMIT_IR"],
+    "examples": ["termux-infrared-transmit -f 38000 -p 0000 006d 0022 0002 0155 00aa 0015 00aa"]
+  },
+  {
+    "command": "termux-job-scheduler",
+    "name": "任务调度",
+    "category": "系统与设备",
+    "description": "按时间或条件调度执行脚本，支持网络、充电、空闲等约束。",
+    "usage": "termux-job-scheduler [options]",
+    "options": [
+      {"flag": "--job-id", "arg": "id", "desc": "任务 ID"},
+      {"flag": "--script", "arg": "path", "desc": "要执行的脚本"},
+      {"flag": "--arg", "arg": "value", "desc": "脚本参数"},
+      {"flag": "--start", "arg": "timestamp", "desc": "开始时间"},
+      {"flag": "--period", "arg": "ms", "desc": "执行周期（毫秒）"},
+      {"flag": "--network", "arg": "any|cellular|wifi", "desc": "网络要求"},
+      {"flag": "--charging", "arg": "", "desc": "充电时执行"},
+      {"flag": "--idle", "arg": "", "desc": "空闲时执行"},
+      {"flag": "--storage-not-low", "arg": "", "desc": "存储充足时"},
+      {"flag": "--battery-not-low", "arg": "", "desc": "电量充足时"},
+      {"flag": "--pending", "arg": "", "desc": "查看待执行任务"},
+      {"flag": "--cancel", "arg": "id", "desc": "取消任务"},
+      {"flag": "--cancel-all", "arg": "", "desc": "取消所有任务"}
+    ],
+    "permissions": [],
+    "examples": ["termux-job-scheduler --job-id 1 --period 3600000 --script /data/data/com.termux/files/home/sync.sh"]
+  },
+  {
+    "command": "termux-keystore",
+    "name": "密钥存储",
+    "category": "安全与隐私",
+    "description": "管理加密的密钥值存储，支持添加、读取、列出和删除密钥。",
+    "usage": "termux-keystore [options]",
+    "options": [
+      {"flag": "--add", "arg": "key", "desc": "添加密钥"},
+      {"flag": "--get", "arg": "key", "desc": "读取密钥"},
+      {"flag": "--list", "arg": "", "desc": "列出密钥"},
+      {"flag": "--delete", "arg": "key", "desc": "删除密钥"},
+      {"flag": "--alias", "arg": "name", "desc": "别名"},
+      {"flag": "--algorithm", "arg": "name", "desc": "算法"},
+      {"flag": "--key", "arg": "value", "desc": "密钥值"},
+      {"flag": "--signature", "arg": "value", "desc": "签名"},
+      {"flag": "--digests", "arg": "value", "desc": "摘要"},
+      {"flag": "--purposes", "arg": "value", "desc": "用途"},
+      {"flag": "--size", "arg": "bits", "desc": "密钥大小"},
+      {"flag": "--curve", "arg": "name", "desc": "曲线"},
+      {"flag": "--validity", "arg": "days", "desc": "有效期"}
+    ],
+    "permissions": [],
+    "examples": ["termux-keystore --add mykey --key secret", "termux-keystore --get mykey"]
+  },
+  {
+    "command": "termux-location",
+    "name": "定位",
+    "category": "系统与设备",
+    "description": "获取设备位置，支持 GPS、网络和被动定位。",
+    "usage": "termux-location [options]",
+    "options": [
+      {"flag": "-p, --provider", "arg": "gps|network|passive", "desc": "定位方式"},
+      {"flag": "-r, --request", "arg": "once|updates|last", "desc": "请求类型"}
+    ],
+    "permissions": ["ACCESS_FINE_LOCATION"],
+    "examples": ["termux-location -p gps -r once", "termux-location -r updates"]
+  },
+  {
+    "command": "termux-media-player",
+    "name": "媒体播放",
+    "category": "媒体与音频",
+    "description": "控制媒体播放：播放、暂停、停止、快进和音量调节。",
+    "usage": "termux-media-player [options] <command> [args]",
+    "options": [
+      {"flag": "play", "arg": "file", "desc": "播放文件"},
+      {"flag": "pause", "arg": "", "desc": "暂停"},
+      {"flag": "stop", "arg": "", "desc": "停止"},
+      {"flag": "seek", "arg": "ms", "desc": "跳转时间"},
+      {"flag": "volume", "arg": "0-100", "desc": "设置音量"},
+      {"flag": "info", "arg": "", "desc": "播放信息"}
+    ],
+    "permissions": [],
+    "examples": ["termux-media-player play /sdcard/song.mp3", "termux-media-player pause", "termux-media-player info"]
+  },
+  {
+    "command": "termux-media-scan",
+    "name": "媒体扫描",
+    "category": "媒体与音频",
+    "description": "扫描媒体文件并添加到媒体库。",
+    "usage": "termux-media-scan [options] <path>",
+    "options": [
+      {"flag": "--recursive", "arg": "", "desc": "递归扫描目录"},
+      {"flag": "--verbose", "arg": "", "desc": "详细输出"},
+      {"flag": "-p, --paths", "arg": "path", "desc": "要扫描的路径"}
+    ],
+    "permissions": [],
+    "examples": ["termux-media-scan -p /sdcard/Music /sdcard/DCIM", "termux-media-scan --recursive --verbose -p /sdcard"]
+  },
+  {
+    "command": "termux-microphone-record",
+    "name": "录音",
+    "category": "媒体与音频",
+    "description": "录制麦克风音频到文件，支持多种编码和格式。",
+    "usage": "termux-microphone-record [options]",
+    "options": [
+      {"flag": "-f, --file", "arg": "path", "desc": "输出文件"},
+      {"flag": "-e, --encoder", "arg": "name", "desc": "编码器"},
+      {"flag": "-b, --bitrate", "arg": "bps", "desc": "比特率"},
+      {"flag": "-s, --srate", "arg": "hz", "desc": "采样率"},
+      {"flag": "-c, --channels", "arg": "n", "desc": "声道数"},
+      {"flag": "--format", "arg": "mp4|opus|wav|aac", "desc": "输出格式"},
+      {"flag": "-l, --limit", "arg": "seconds", "desc": "录制时长限制"}
+    ],
+    "permissions": ["RECORD_AUDIO"],
+    "examples": ["termux-microphone-record -f /sdcard/rec.mp4 -l 10", "termux-microphone-record -f /sdcard/rec.opus"]
+  },
+  {
+    "command": "termux-nfc",
+    "name": "NFC",
+    "category": "系统与设备",
+    "description": "读取 NFC 标签或与其他 NFC 设备交互。",
+    "usage": "termux-nfc [options]",
+    "options": [
+      {"flag": "-m, --mode", "arg": "read|beam|transceive", "desc": "NFC 模式"},
+      {"flag": "-p, --param", "arg": "value", "desc": "模式参数"}
+    ],
+    "permissions": ["NFC"],
+    "examples": ["termux-nfc -m read"]
+  },
+  {
+    "command": "termux-notification",
+    "name": "发送通知",
+    "category": "界面与通知",
+    "description": "显示系统通知，支持按钮、分组、图标、振动等丰富设置。",
+    "usage": "termux-notification [options]",
+    "options": [
+      {"flag": "-i, --id", "arg": "id", "desc": "通知 ID"},
+      {"flag": "-t, --title", "arg": "text", "desc": "通知标题"},
+      {"flag": "-c, --content", "arg": "text", "desc": "通知内容"},
+      {"flag": "-b, --button", "arg": "text", "desc": "按钮文本"},
+      {"flag": "--action", "arg": "cmd", "desc": "按钮命令"},
+      {"flag": "--button-action", "arg": "cmd", "desc": "按钮动作"},
+      {"flag": "--button-action-2", "arg": "cmd", "desc": "按钮动作 2"},
+      {"flag": "--on-delete-action", "arg": "cmd", "desc": "删除时命令"},
+      {"flag": "--channel", "arg": "name", "desc": "通知渠道"},
+      {"flag": "--priority", "arg": "low|normal|high|max", "desc": "优先级"},
+      {"flag": "--group", "arg": "name", "desc": "通知分组"},
+      {"flag": "--icon", "arg": "name", "desc": "图标"},
+      {"flag": "--sound", "arg": "", "desc": "声音"},
+      {"flag": "--vibrate", "arg": "pattern", "desc": "振动模式"},
+      {"flag": "--led-color", "arg": "color", "desc": "LED 颜色"},
+      {"flag": "--ongoing", "arg": "", "desc": "常驻通知"},
+      {"flag": "--type", "arg": "media|default", "desc": "通知类型"}
+    ],
+    "permissions": ["POST_NOTIFICATIONS"],
+    "examples": ["termux-notification -t \"标题\" -c \"内容\"", "termux-notification --id 1 --ongoing --action \"termux-toast 被点击\""]
+  },
+  {
+    "command": "termux-notification-channel",
+    "name": "通知渠道",
+    "category": "界面与通知",
+    "description": "创建或修改通知渠道。",
+    "usage": "termux-notification-channel [options]",
+    "options": [
+      {"flag": "--id", "arg": "id", "desc": "渠道 ID"},
+      {"flag": "--name", "arg": "text", "desc": "渠道名称"},
+      {"flag": "--description", "arg": "text", "desc": "渠道描述"}
+    ],
+    "permissions": [],
+    "examples": ["termux-notification-channel --id updates --name \"更新\" --description \"更新通知\""]
+  },
+  {
+    "command": "termux-notification-list",
+    "name": "通知列表",
+    "category": "界面与通知",
+    "description": "列出当前所有通知。",
+    "usage": "termux-notification-list",
+    "options": [],
+    "permissions": ["BIND_NOTIFICATION_LISTENER_SERVICE"],
+    "examples": ["termux-notification-list"]
+  },
+  {
+    "command": "termux-notification-remove",
+    "name": "移除通知",
+    "category": "界面与通知",
+    "description": "移除指定 ID 的通知。",
+    "usage": "termux-notification-remove --id <id>",
+    "options": [
+      {"flag": "--id", "arg": "id", "desc": "通知 ID"}
+    ],
+    "permissions": [],
+    "examples": ["termux-notification-remove --id 1"]
+  },
+  {
+    "command": "termux-notification-reply",
+    "name": "通知回复",
+    "category": "界面与通知",
+    "description": "向可回复的通知发送回复。",
+    "usage": "termux-notification-reply --id <id> --channel <name>",
+    "options": [
+      {"flag": "--id", "arg": "id", "desc": "通知 ID"},
+      {"flag": "--channel", "arg": "name", "desc": "渠道名称"}
+    ],
+    "permissions": ["BIND_NOTIFICATION_LISTENER_SERVICE"],
+    "examples": ["termux-notification-reply --id 1 --channel messages"]
+  },
+  {
+    "command": "termux-saf-get",
+    "name": "SAF 文件访问",
+    "category": "系统与设备",
+    "description": "通过 Storage Access Framework 获取文件或目录。",
+    "usage": "termux-saf-get [options]",
+    "options": [
+      {"flag": "--saf-method", "arg": "method", "desc": "SAF 方法"},
+      {"flag": "--uri", "arg": "uri", "desc": "文件 URI"},
+      {"flag": "--tree-uri", "arg": "uri", "desc": "目录树 URI"},
+      {"flag": "--filename", "arg": "name", "desc": "文件名"},
+      {"flag": "--mimetype", "arg": "type", "desc": "MIME 类型"}
+    ],
+    "permissions": ["MANAGE_EXTERNAL_STORAGE"],
+    "examples": ["termux-saf-get --saf-method read-file --uri content://..."]
+  },
+  {
+    "command": "termux-sensor",
+    "name": "传感器",
+    "category": "系统与设备",
+    "description": "读取各类传感器数据（加速度计、陀螺仪等）。",
+    "usage": "termux-sensor [options]",
+    "options": [
+      {"flag": "-s, --sensors", "arg": "list", "desc": "要读取的传感器"},
+      {"flag": "-d, --delay", "arg": "microseconds", "desc": "采样延迟"},
+      {"flag": "-l, --limit", "arg": "n", "desc": "采样次数限制"},
+      {"flag": "-a, --all", "arg": "", "desc": "读取所有传感器"}
+    ],
+    "permissions": ["BODY_SENSORS"],
+    "examples": ["termux-sensor -s accelerometer -d 10000 -l 10", "termux-sensor --all"]
+  },
+  {
+    "command": "termux-share",
+    "name": "分享",
+    "category": "界面与通知",
+    "description": "分享文本或文件到其他应用。",
+    "usage": "termux-share [options]",
+    "options": [
+      {"flag": "-a, --action", "arg": "send|view", "desc": "操作类型"},
+      {"flag": "-t, --title", "arg": "text", "desc": "分享标题"},
+      {"flag": "-c, --content", "arg": "text", "desc": "分享内容"},
+      {"flag": "-f, --file", "arg": "path", "desc": "分享文件"},
+      {"flag": "-d, --chooser", "arg": "title", "desc": "显示选择器"}
+    ],
+    "permissions": [],
+    "examples": ["termux-share -t \"分享\" -c \"hello\"", "termux-share -f /sdcard/file.txt", "echo text | termux-share -c"]
+  },
+  {
+    "command": "termux-sms-inbox",
+    "name": "短信收件箱",
+    "category": "个人信息",
+    "description": "列出短信收件箱中的消息。",
+    "usage": "termux-sms-inbox [options]",
+    "options": [
+      {"flag": "-l, --limit", "arg": "N", "desc": "条数限制"},
+      {"flag": "-o, --offset", "arg": "N", "desc": "偏移量"},
+      {"flag": "-t, --type", "arg": "all|inbox|sent|draft|outbox", "desc": "消息类型"}
+    ],
+    "permissions": ["READ_SMS", "READ_CONTACTS"],
+    "examples": ["termux-sms-inbox -l 10", "termux-sms-inbox -t sent"]
+  },
+  {
+    "command": "termux-sms-send",
+    "name": "发送短信",
+    "category": "个人信息",
+    "description": "向一个或多个号码发送短信。",
+    "usage": "termux-sms-send -n <number> <content>",
+    "options": [
+      {"flag": "-n, --number", "arg": "number", "desc": "接收号码"},
+      {"flag": "--slot", "arg": "0|1", "desc": "SIM 卡槽"},
+      {"flag": "--recipient", "arg": "number", "desc": "收件人（可多次指定）"}
+    ],
+    "permissions": ["SEND_SMS", "READ_PHONE_STATE"],
+    "examples": ["termux-sms-send -n 1234567890 \"你好\"", "termux-sms-send -n 123 -n 456 \"群发\""]
+  },
+  {
+    "command": "termux-speech-to-text",
+    "name": "语音转文字",
+    "category": "媒体与音频",
+    "description": "识别麦克风中的语音并输出文字。",
+    "usage": "termux-speech-to-text",
+    "options": [
+      {"flag": "-l, --language", "arg": "code", "desc": "语言代码"}
+    ],
+    "permissions": ["RECORD_AUDIO"],
+    "examples": ["termux-speech-to-text"]
+  },
+  {
+    "command": "termux-storage-get",
+    "name": "获取文件",
+    "category": "系统与设备",
+    "description": "请求一个存储文件并返回其路径。",
+    "usage": "termux-storage-get [options]",
+    "options": [
+      {"flag": "-f, --file", "arg": "path", "desc": "输出文件路径"}
+    ],
+    "permissions": [],
+    "examples": ["termux-storage-get -f /sdcard/picked.txt"]
+  },
+  {
+    "command": "termux-telephony-call",
+    "name": "拨打电话",
+    "category": "个人信息",
+    "description": "拨打电话号码。",
+    "usage": "termux-telephony-call -n <number>",
+    "options": [
+      {"flag": "-n, --number", "arg": "number", "desc": "电话号码"}
+    ],
+    "permissions": ["CALL_PHONE"],
+    "examples": ["termux-telephony-call -n 1234567890"]
+  },
+  {
+    "command": "termux-telephony-cellinfo",
+    "name": "基站信息",
+    "category": "个人信息",
+    "description": "获取蜂窝网络基站信息。",
+    "usage": "termux-telephony-cellinfo",
+    "options": [],
+    "permissions": ["ACCESS_COARSE_LOCATION"],
+    "examples": ["termux-telephony-cellinfo"]
+  },
+  {
+    "command": "termux-telephony-deviceinfo",
+    "name": "设备信息",
+    "category": "个人信息",
+    "description": "获取手机设备信息（IMEI、SIM、网络等）。",
+    "usage": "termux-telephony-deviceinfo",
+    "options": [],
+    "permissions": ["READ_PHONE_STATE"],
+    "examples": ["termux-telephony-deviceinfo"]
+  },
+  {
+    "command": "termux-text-to-speech",
+    "name": "文字转语音",
+    "category": "媒体与音频",
+    "description": "朗读指定文本。",
+    "usage": "termux-text-to-speech [options] <text>",
+    "options": [
+      {"flag": "-e, --engine", "arg": "name", "desc": "TTS 引擎"},
+      {"flag": "-p, --pitch", "arg": "n", "desc": "音调"},
+      {"flag": "-s, --rate", "arg": "n", "desc": "语速"},
+      {"flag": "-l, --language", "arg": "code", "desc": "语言"},
+      {"flag": "-r, --region", "arg": "code", "desc": "地区"},
+      {"flag": "-v, --variant", "arg": "name", "desc": "变体"},
+      {"flag": "--stream", "arg": "type", "desc": "音频流"}
+    ],
+    "permissions": [],
+    "examples": ["termux-text-to-speech \"hello\"", "termux-tts-speak -l zh 你好"]
+  },
+  {
+    "command": "termux-toast",
+    "name": "Toast 提示",
+    "category": "界面与通知",
+    "description": "显示一条 Toast 消息。",
+    "usage": "termux-toast [options] <text>",
+    "options": [
+      {"flag": "-s, --short", "arg": "", "desc": "短时显示"},
+      {"flag": "--background", "arg": "color", "desc": "背景色"},
+      {"flag": "--text-color", "arg": "color", "desc": "文字颜色"},
+      {"flag": "--gravity", "arg": "top|middle|bottom", "desc": "显示位置"}
+    ],
+    "permissions": [],
+    "examples": ["termux-toast \"你好\"", "echo hi | termux-toast", "termux-toast -s --background red --text-color white 提示"]
+  },
+  {
+    "command": "termux-torch",
+    "name": "手电筒",
+    "category": "系统与设备",
+    "description": "打开或关闭手电筒（闪光灯）。",
+    "usage": "termux-torch [options]",
+    "options": [
+      {"flag": "on", "arg": "", "desc": "打开手电筒"},
+      {"flag": "off", "arg": "", "desc": "关闭手电筒"},
+      {"flag": "--enabled", "arg": "true|false", "desc": "开关状态"}
+    ],
+    "permissions": ["CAMERA"],
+    "examples": ["termux-torch on", "termux-torch off"]
+  },
+  {
+    "command": "termux-usb",
+    "name": "USB 设备",
+    "category": "系统与设备",
+    "description": "列出 USB 设备或与指定设备交互。",
+    "usage": "termux-usb [options]",
+    "options": [
+      {"flag": "-l, --list", "arg": "", "desc": "列出 USB 设备"},
+      {"flag": "-d, --device", "arg": "path", "desc": "设备路径"},
+      {"flag": "-r, --request", "arg": "request", "desc": "请求类型"}
+    ],
+    "permissions": ["USB_PERMISSION"],
+    "examples": ["termux-usb -l"]
+  },
+  {
+    "command": "termux-vibrate",
+    "name": "振动",
+    "category": "系统与设备",
+    "description": "让设备振动。",
+    "usage": "termux-vibrate [options]",
+    "options": [
+      {"flag": "-d, --duration", "arg": "ms", "desc": "振动时长"},
+      {"flag": "-f, --force", "arg": "", "desc": "强制振动"},
+      {"flag": "-c, --curve", "arg": "pattern", "desc": "振动波形"}
+    ],
+    "permissions": ["VIBRATE"],
+    "examples": ["termux-vibrate", "termux-vibrate -d 1000"]
+  },
+  {
+    "command": "termux-volume",
+    "name": "音量控制",
+    "category": "界面与通知",
+    "description": "查询或设置各音频流的音量。",
+    "usage": "termux-volume [options]",
+    "options": [
+      {"flag": "--stream", "arg": "type", "desc": "音频流类型"},
+      {"flag": "--volume", "arg": "0-100", "desc": "音量值"}
+    ],
+    "permissions": [],
+    "examples": ["termux-volume", "termux-volume --stream music --volume 50"]
+  },
+  {
+    "command": "termux-wallpaper",
+    "name": "壁纸",
+    "category": "界面与通知",
+    "description": "设置主屏或锁屏壁纸。",
+    "usage": "termux-wallpaper [options]",
+    "options": [
+      {"flag": "-f, --file", "arg": "path", "desc": "壁纸文件"},
+      {"flag": "-u, --url", "arg": "url", "desc": "壁纸 URL"},
+      {"flag": "-l, --lockscreen", "arg": "", "desc": "设置锁屏壁纸"}
+    ],
+    "permissions": ["SET_WALLPAPER"],
+    "examples": ["termux-wallpaper -f /sdcard/wall.jpg", "termux-wallpaper -u https://example.com/wall.jpg -l"]
+  },
+  {
+    "command": "termux-wifi-connectioninfo",
+    "name": "WiFi 连接信息",
+    "category": "系统与设备",
+    "description": "获取当前 WiFi 连接的信息。",
+    "usage": "termux-wifi-connectioninfo",
+    "options": [],
+    "permissions": ["ACCESS_WIFI_STATE"],
+    "examples": ["termux-wifi-connectioninfo"]
+  },
+  {
+    "command": "termux-wifi-enable",
+    "name": "WiFi 开关",
+    "category": "系统与设备",
+    "description": "启用或禁用 WiFi。",
+    "usage": "termux-wifi-enable --enabled <true|false>",
+    "options": [
+      {"flag": "--enabled", "arg": "true|false", "desc": "WiFi 开关状态"}
+    ],
+    "permissions": ["CHANGE_WIFI_STATE"],
+    "examples": ["termux-wifi-enable --enabled true"]
+  },
+  {
+    "command": "termux-wifi-scaninfo",
+    "name": "WiFi 扫描信息",
+    "category": "系统与设备",
+    "description": "扫描并列出附近的 WiFi 网络。",
+    "usage": "termux-wifi-scaninfo [options]",
+    "options": [
+      {"flag": "-s, --sort", "arg": "rssi|ssid", "desc": "排序方式"}
+    ],
+    "permissions": ["ACCESS_FINE_LOCATION", "ACCESS_WIFI_STATE"],
+    "examples": ["termux-wifi-scaninfo", "termux-wifi-scaninfo -s rssi"]
+  }
+]

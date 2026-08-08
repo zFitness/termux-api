@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Termux:API</title>
+<link rel="stylesheet" href="api_style.css">
+</head>
+<body>
+
+<header class="header">
+    <div class="logo">
+        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M6 8l4 4-4 4" stroke="#00e676" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M13 16h5" stroke="#00e676" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+    </div>
+    <div class="header-text">
+        <h1>Termux:<span class="accent">API</span></h1>
+        <p>Android API for command line</p>
+    </div>
+    <div class="spacer"></div>
+    <button class="icon-btn" id="btn-settings" title="Settings">&#9881;</button>
+</header>
+
+<div class="stats">
+    <div class="stat"><div class="num" id="stat-total">-</div><div class="label">APIs</div></div>
+    <div class="stat"><div class="num" id="stat-cats">-</div><div class="label">Categories</div></div>
+    <div class="stat"><div class="num" id="stat-perms">-</div><div class="label">Permissions</div></div>
+</div>
+
+<div id="warnings"></div>
+
+<div class="search-wrap">
+    <span class="search-icon">&#128269;</span>
+    <input class="search" id="search" type="text" placeholder="search termux-* ..." autocomplete="off">
+</div>
+
+<div id="api-list"></div>
+
+<details class="info">
+    <summary><span class="chev">&#9654;</span> 关于 Termux:API</summary>
+    <div class="info-body">
+        <ol>
+            <li>Termux:API 插件应用将 Android 系统功能暴露给命令行。</li>
+            <li>运行 <code>pkg install termux-api</code> 安装客户端脚本后即可使用 <code>termux-*</code> 命令。</li>
+            <li>点击上方任意 API 卡片查看详细用法与参数。</li>
+        </ol>
+    </div>
+</details>
+
+<div class="footer">
+    <span id="footer-version">Termux:API</span> &middot; 深色终端风
+</div>
+
+<div id="toast"></div>
+
+<script>
+(function () {
+    'use strict';
+
+    var CATEGORY_ICONS = {
+        "系统与设备": "D",
+        "界面与通知": "N",
+        "媒体与音频": "A",
+        "个人信息": "P",
+        "安全与隐私": "S"
+    };
+
+    var apiData = [];
+    var filtered = [];
+    var categories = [];
+
+    function $(id) { return document.getElementById(id); }
+
+    function el(tag, className, text) {
+        var node = document.createElement(tag);
+        if (className) node.className = className;
+        if (text !== undefined && text !== null) node.textContent = text;
+        return node;
+    }
+
+    function loadData() {
+        try {
+            var raw = window.TermuxApi.getApis();
+            apiData = JSON.parse(raw);
+        } catch (e) {
+            renderError();
+            return;
+        }
+
+        var seen = {};
+        categories = [];
+        apiData.forEach(function (api) {
+            if (!seen[api.category]) {
+                seen[api.category] = true;
+                categories.push(api.category);
+            }
+        });
+
+        $('stat-total').textContent = apiData.length;
+        $('stat-cats').textContent = categories.length;
+        $('stat-perms').textContent = apiData.filter(function (a) {
+            return a.permissions && a.permissions.length;
+        }).length;
+        if (apiData.length === 0) $('stat-total').classList.add('zero');
+
+        render();
+    }
+
+    function renderError() {
+        var list = $('api-list');
+        list.appendChild(el('div', 'empty', '无法加载 API 数据'));
+    }
+
+    function render() {
+        var query = $('search').value.toLowerCase().trim();
+        filtered = apiData.filter(function (api) {
+            if (!query) return true;
+            var haystack = (api.command + ' ' + api.name + ' ' + api.description).toLowerCase();
+            return haystack.indexOf(query) !== -1;
+        });
+
+        var list = $('api-list');
+        list.innerHTML = '';
+        $('stat-total').textContent = filtered.length;
+
+        if (filtered.length === 0) {
+            var empty = el('div', 'empty');
+            empty.appendChild(el('div', 'empty-icon', '&#8709;'));
+            empty.appendChild(el('div', 'empty-title', '没有匹配的 API'));
+            var emptySub = el('div', 'empty-sub', '换个关键词试试，例如 ');
+            emptySub.appendChild(el('code', null, 'battery'));
+            empty.appendChild(emptySub);
+            list.appendChild(empty);
+            return;
+        }
+
+        categories.forEach(function (cat) {
+            var items = filtered.filter(function (api) { return api.category === cat; });
+            if (items.length === 0) return;
+
+            var section = el('div', 'category');
+
+            var title = el('div', 'category-title');
+            title.appendChild(el('div', 'cat-icon', CATEGORY_ICONS[cat] || '?'));
+            var h2 = el('h2', null, cat);
+            title.appendChild(h2);
+            title.appendChild(el('div', 'count', items.length + ''));
+            section.appendChild(title);
+
+            items.forEach(function (api) {
+                section.appendChild(buildCard(api));
+            });
+
+            list.appendChild(section);
+        });
+    }
+
+    function buildCard(api) {
+        var card = el('div', 'api-card');
+
+        var body = el('div', 'api-body');
+        body.appendChild(el('div', 'api-name', api.command));
+        body.appendChild(el('div', 'api-desc', api.name + ' — ' + api.description));
+        card.appendChild(body);
+        card.appendChild(el('div', 'chev', '&#9656;'));
+
+        card.addEventListener('click', function () {
+            window.location.href = 'api_detail.html?cmd=' + encodeURIComponent(api.command);
+        });
+        return card;
+    }
+
+    function buildWarning(title, text, buttons) {
+        var card = el('div', 'warning-card');
+        card.appendChild(el('div', 'warn-icon', '&#9888;'));
+
+        var body = el('div', 'warn-body');
+        body.appendChild(el('div', 'warn-title', title));
+        body.appendChild(el('div', 'warn-text', text));
+
+        if (buttons && buttons.length) {
+            var actions = el('div', 'warn-actions');
+            buttons.forEach(function (btnDef) {
+                var btn = el('button', 'btn warn small', btnDef.label);
+                btn.addEventListener('click', function () {
+                    if (btnDef.action) btnDef.action();
+                });
+                actions.appendChild(btn);
+            });
+            body.appendChild(actions);
+        }
+
+        card.appendChild(body);
+        return card;
+    }
+
+    function refreshWarnings() {
+        var wrap = $('warnings');
+        if (!wrap) return;
+        wrap.innerHTML = '';
+
+        var batteryOk = true;
+        var overlayOk = true;
+        try { batteryOk = !!window.TermuxApi.isBatteryOptimizationDisabled(); } catch (e) {}
+        try { overlayOk = !!window.TermuxApi.isDisplayOverOtherAppsPermissionGranted(); } catch (e) {}
+
+        if (!batteryOk) {
+            wrap.appendChild(buildWarning(
+                '电池优化未禁用',
+                '建议为 Termux:API 禁用电池优化，以免 termux-api 命令在后台启动时失败。',
+                [{
+                    label: '禁用电池优化',
+                    action: function () {
+                        try { window.TermuxApi.requestDisableBatteryOptimizations(); } catch (e) {}
+                    }
+                }]
+            ));
+        }
+
+        if (!overlayOk) {
+            wrap.appendChild(buildWarning(
+                '未授予显示在其他应用上层权限',
+                '建议授予该权限，以便从后台启动前台界面。',
+                [{
+                    label: '授予权限',
+                    action: function () {
+                        try { window.TermuxApi.requestGrantDisplayOverOtherAppsPermission(); } catch (e) {}
+                    }
+                }]
+            ));
+        }
+    }
+
+    function toast(msg) {
+        var t = $('toast');
+        t.textContent = msg;
+        t.classList.add('show');
+        clearTimeout(t._timer);
+        t._timer = setTimeout(function () { t.classList.remove('show'); }, 1800);
+    }
+
+    function init() {
+        $('search').addEventListener('input', render);
+
+        $('btn-settings').addEventListener('click', function () {
+            try {
+                window.TermuxApi.openSettings();
+            } catch (e) { toast('无法打开设置'); }
+        });
+
+        var version = 'Termux:API';
+        try { version = window.TermuxApi.getVersion(); } catch (e) {}
+        $('footer-version').textContent = version;
+
+        // Refresh warnings when returning from a permission/optimization screen.
+        window.TermuxApiRefresh = refreshWarnings;
+
+        loadData();
+        refreshWarnings();
+    }
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', init);
+    } else {
+        init();
+    }
+})();
+</script>
+</body>
+</html>

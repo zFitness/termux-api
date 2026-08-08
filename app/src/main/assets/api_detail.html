@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>API 详情</title>
+<link rel="stylesheet" href="api_style.css">
+</head>
+<body>
+
+<header class="detail-header">
+    <button class="back-btn" id="btn-back" title="返回">&#10094;</button>
+    <div class="detail-text">
+        <h1 id="api-command">-</h1>
+        <div class="badges">
+            <span class="badge category" id="api-category">-</span>
+            <span class="badge permission" id="api-perms-badge">0 permissions</span>
+        </div>
+    </div>
+</header>
+
+<div class="detail-desc" id="api-desc">-</div>
+
+<div class="detail-section">
+    <h3>用法</h3>
+    <div class="usage-block">
+        <div class="usage-label">Usage</div>
+        <pre id="api-usage">-</pre>
+        <div class="copy-row">
+            <button class="btn small ghost" id="btn-copy">&#128203; 复制</button>
+        </div>
+    </div>
+</div>
+
+<div class="detail-section" id="options-section">
+    <h3>参数</h3>
+    <table class="options">
+        <thead>
+            <tr><th>Option</th><th>参数</th><th>说明</th></tr>
+        </thead>
+        <tbody id="options-body"></tbody>
+    </table>
+</div>
+
+<div class="detail-section" id="examples-section">
+    <h3>示例</h3>
+    <div id="examples-body"></div>
+</div>
+
+<div class="detail-section" id="perms-section">
+    <h3>所需权限</h3>
+    <div class="perm-list" id="perms-body"></div>
+</div>
+
+<div class="footer">
+    <span>Termux:API</span> &middot; 详情页
+</div>
+
+<div id="toast"></div>
+
+<script>
+(function () {
+    'use strict';
+
+    function $(id) { return document.getElementById(id); }
+
+    function el(tag, className, text) {
+        var node = document.createElement(tag);
+        if (className) node.className = className;
+        if (text !== undefined && text !== null) node.textContent = text;
+        return node;
+    }
+
+    function copyText(text) {
+        var ta = document.createElement('textarea');
+        ta.value = text;
+        ta.style.position = 'fixed';
+        ta.style.opacity = '0';
+        document.body.appendChild(ta);
+        ta.focus();
+        ta.select();
+        try {
+            document.execCommand('copy');
+        } catch (e) { /* fallback */ }
+        document.body.removeChild(ta);
+    }
+
+    function toast(msg) {
+        var t = $('toast');
+        t.textContent = msg;
+        t.classList.add('show');
+        clearTimeout(t._timer);
+        t._timer = setTimeout(function () { t.classList.remove('show'); }, 1800);
+    }
+
+    function getCmdParam() {
+        var q = window.location.search;
+        var m = /[?&]cmd=([^&]+)/.exec(q);
+        return m ? decodeURIComponent(m[1].replace(/\+/g, ' ')) : null;
+    }
+
+    function renderNotFound() {
+        var cmd = $('api-command');
+        cmd.textContent = 'API 不存在';
+        $('api-desc').textContent = '未找到该 API 的定义。';
+        $('options-section').style.display = 'none';
+        $('examples-section').style.display = 'none';
+        $('perms-section').style.display = 'none';
+    }
+
+    function init() {
+        $('btn-back').addEventListener('click', function () {
+            if (window.history.length > 1) {
+                window.history.back();
+            } else {
+                window.location.href = 'overview.html';
+            }
+        });
+
+        var cmd = getCmdParam();
+        var api = null;
+
+        try {
+            var raw = window.TermuxApi.getApis();
+            var all = JSON.parse(raw);
+            for (var i = 0; i < all.length; i++) {
+                if (all[i].command === cmd) { api = all[i]; break; }
+            }
+        } catch (e) { /* handled below */ }
+
+        if (!api) { renderNotFound(); return; }
+
+        $('api-command').textContent = api.command;
+        $('api-category').textContent = api.category;
+        $('api-desc').textContent = api.name + '：' + api.description;
+        $('api-usage').textContent = api.usage;
+
+        $('btn-copy').addEventListener('click', function () {
+            copyText(api.usage);
+            toast('已复制到剪贴板');
+        });
+
+        var optionsBody = $('options-body');
+        if (api.options && api.options.length) {
+            api.options.forEach(function (opt) {
+                var tr = el('tr');
+                tr.appendChild(el('td', 'opt', opt.flag));
+                tr.appendChild(el('td', 'arg', opt.arg || '-'));
+                tr.appendChild(el('td', 'desc', opt.desc));
+                optionsBody.appendChild(tr);
+            });
+        } else {
+            var tr = el('tr');
+            var td = el('td', 'desc', '此 API 无命令行参数。');
+            td.setAttribute('colspan', '3');
+            tr.appendChild(td);
+            optionsBody.appendChild(tr);
+        }
+
+        if (api.examples && api.examples.length) {
+            var exBody = $('examples-body');
+            api.examples.forEach(function (ex) {
+                exBody.appendChild(el('pre', 'code', '$ ' + ex));
+            });
+        } else {
+            $('examples-section').style.display = 'none';
+        }
+
+        if (api.permissions && api.permissions.length) {
+            var permsBody = $('perms-body');
+            api.permissions.forEach(function (p) {
+                permsBody.appendChild(el('div', 'perm-item', p));
+            });
+            $('api-perms-badge').textContent = api.permissions.length + ' permissions';
+        } else {
+            $('perms-section').style.display = 'none';
+            $('api-perms-badge').style.display = 'none';
+        }
+    }
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', init);
+    } else {
+        init();
+    }
+})();
+</script>
+</body>
+</html>
